@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y git
 # Set the working directory to /app
 WORKDIR /app
 
-# Clone the private repository
+# Clone the private repository which contains the test cases
 RUN git clone -b testing_coding_platform https://github.com/agustinruatta/argencoin
 
 # Set the working directory to the cloned repository
