@@ -19,7 +19,7 @@ export class SolidityOutputParser implements OutputParser {
     }
 
     parseSuccess(stdout: string): string {
-        return stdout.split('\n').filter(line => line.trim() === '').join('\n');
+        return stdout.split('\n').filter(line => line.trim() !== '').join('\n');
     }
 
     parseError(stderr: string): string {
@@ -29,10 +29,10 @@ export class SolidityOutputParser implements OutputParser {
             const trimmedLine = line.trim();
 
             return (
-                trimmedLine === '' ||
-                    trimmedLine.includes('passing') ||
-                    trimmedLine.includes('failing') ||
-                    trimmedLine.substring(0, 2) === 'at'
+                trimmedLine !== '' &&
+                    ! trimmedLine.includes('passing') &&
+                    ! trimmedLine.includes('failing') &&
+                    trimmedLine.substring(0, 2) !== 'at'
             )
         }).join('\n')
     }
@@ -56,7 +56,11 @@ export async function executeTest(techStack: TECH_STACKS, commandToExecuteTests:
 
     return {
         successful: executionInfo.exitCode === 0,
-        output: outputParser.parseOutput(executionInfo.exitCode, executionInfo.stdout, executionInfo.stderr)
+        output: outputParser.parseOutput(
+            executionInfo.exitCode,
+            executionInfo.stdout,
+            executionInfo.stderr.trim() !== '' ? executionInfo.stderr : executionInfo.stdout
+        )
     }
 }
 
