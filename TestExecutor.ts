@@ -44,6 +44,8 @@ export async function executeTest(
     techStack: TECH_STACKS,
     //This is the command that we need to execute tests inside container. For example, with solidity using hardhat is "npx hardhat test"
     commandToExecuteTests: string,
+    //This is the code that the user has wrote and we need to check if it is OK
+    userAssessmentCode: string,
     //Every tech stack has a different parser. This parser make output prettier, removing things that does not make sense
     outputParser: OutputParser
 ) {
