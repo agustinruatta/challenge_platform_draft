@@ -11,7 +11,7 @@ interface OutputParser {
 
 export class SolidityOutputParser implements OutputParser {
     parseOutput(exitCode: number, stdout: string, stderr: string): string {
-        if (exitCode === 0)~~ {
+        if (exitCode === 0) {
             return this.parseSuccess(stdout);
         } else {
             return this.parseError(stderr);
