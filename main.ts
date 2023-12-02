@@ -250,13 +250,18 @@ async function tryThis() {
 
     //*****Success: user sent a correct solution for exercise
     console.log('SUCCESS EXAMPLE:');
+
+    const start = performance.now();
     const successExecutionResult = await testExecutor.executeTest(
         TECH_STACKS.SOLIDITY,
         'npx hardhat test',
         userAssessmentCode
     );
+    const end = performance.now();
+
     console.log('SUCCESSFUL: ' + successExecutionResult.successful);
     console.log('OUTPUT:\n' + successExecutionResult.output);
+    console.log(`EXECUTION TIME: ${end - start} ms.`);
 }
 
 tryThis();
