@@ -1,7 +1,8 @@
 const { exec } = require('child_process');
 
 export enum TECH_STACKS {
-    SOLIDITY = 'solidity'
+    SOLIDITY = 'solidity',
+    CAIRO = 'cairo'
 }
 
 interface OutputParser {
@@ -39,7 +40,13 @@ export class SolidityOutputParser implements OutputParser {
 
 }
 
-export async function executeTest(techStack: TECH_STACKS, commandToExecuteTests: string, outputParser: OutputParser) {
+export async function executeTest(
+    techStack: TECH_STACKS,
+    //This is the command that we need to execute tests inside container. For example, with solidity using hardhat is "npx hardhat test"
+    commandToExecuteTests: string,
+    //Every tech stack has a different parser. This parser make output prettier, removing things that does not make sense
+    outputParser: OutputParser
+) {
     const executionInfo: {exitCode: number, stderr: string, stdout: string} = await (new Promise((resolve) => {
         const command = `docker run --rm ${getContainerFromTechStack(techStack)} ${commandToExecuteTests}`;
 
