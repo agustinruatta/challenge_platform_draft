@@ -6,6 +6,21 @@ const { exec } = require('child_process');
 const fs = require('fs');
 
 export default class TestExecutor {
+    //TODO: Maybe this should be in a DB or a config file
+    private readonly TECH_STACK_CONFIGS = {
+    'solidity': {
+        executionConstraints: {
+            timeLimitInSeconds: 10,
+            memoryLimitInMB: 512,
+            cpusLimit: 0.5,
+        },
+        imageName: 'solidity',
+        fileNamePathToTest: '/app/argencoin/contracts/CentralBank.sol',
+        parser: new SolidityHardhatOutputParser()
+    }
+    //Do the same for cairo, same structure
+}
+
     async executeTest(
         techStack: TECH_STACKS,
         //This is the command that we need to execute tests inside container. For example, with solidity using hardhat is "npx hardhat test"
@@ -52,6 +67,7 @@ export default class TestExecutor {
             Explanation
             ===========
             Here we're running a container. This is divided in:
+            - "timeout -s KILL ": we limit the amount of seconds that a container can take to execute
             - "--rm": we use this to remove container after is executed. This is used to free up disk space
             - "-v $(pwd)/user_assessments/${userCodeFileName}:${this.getFileNamePathToTest(techStack)}": we copy
                 the file with user submitted code inside container, in the specific path and file name that is used in the
@@ -62,7 +78,7 @@ export default class TestExecutor {
             Example of command:
             docker run --rm -v $(pwd)/user_assessments/userAssessmentCode1419503368532867:/app/argencoin/contracts/CentralBank.sol solidity sh -c "npx hardhat test"
              */
-            const command = `docker run --rm -v $(pwd)/user_assessments/${userCodeFileName}:${this.getFileNamePathToTest(techStack)} ${this.getImageNameFromTechStack(techStack)} sh -c "${commandToExecuteTests}"`;
+            const command = `${this.getTimeoutLimit(techStack)} docker run --rm -v $(pwd)/user_assessments/${userCodeFileName}:${this.getFileNamePathToTest(techStack)} ${this.getPerformanceConstraints(techStack)} ${this.getImageNameFromTechStack(techStack)} sh -c "${commandToExecuteTests}"`;
 
             exec(command, (error: any, stdout: string, stderr: string) => {
                 const exitCode = error ? error.code : 0;
@@ -81,19 +97,34 @@ export default class TestExecutor {
         fs.unlinkSync('./user_assessments/' + fileName);
     }
 
+    getTimeoutLimit(techStack: TECH_STACKS): string {
+        //@ts-ignore
+        return `timeout -s KILL ${Number(this.TECH_STACK_CONFIGS[techStack].executionConstraints.timeLimitInSeconds)}s`;
+    }
+
+    getPerformanceConstraints(techStack: TECH_STACKS): string {
+        /*
+        We set here performance constraints:
+        -m: This is the max amount of memory that container can use
+        --cpus: How many CPU container can take
+        --network none: We don't allow any network request
+
+        IMPORTANT: This is very specific for technologies and environment. So play with this values
+
+        More info: https://docs.docker.com/config/containers/resource_constraints/
+         */
+        //@ts-ignore
+        return `-m ${this.TECH_STACK_CONFIGS[techStack].executionConstraints.memoryLimitInMB}MB --cpus=${this.TECH_STACK_CONFIGS[techStack].executionConstraints.cpusLimit} --network none` as string;
+    }
+
     /**
      * Maps the tech stack with the name of the image. This image name comes from the name that you use it when
      * you build it.
      * @param techStack
      */
-    getImageNameFromTechStack(techStack: TECH_STACKS) {
-        const mapping = {
-            'solidity': 'solidity',
-            //Example of cairo container name
-            'cairo': 'cairoContainerV3',
-        }
-
-        return mapping[techStack];
+    getImageNameFromTechStack(techStack: TECH_STACKS): string {
+        //@ts-ignore
+        return this.TECH_STACK_CONFIGS[techStack].imageName as string;
     }
 
     /**
@@ -102,25 +133,16 @@ export default class TestExecutor {
      * @param techStack
      */
     getFileNamePathToTest(techStack: TECH_STACKS): string {
-        const mapping = {
-            'solidity': '/app/argencoin/contracts/CentralBank.sol',
-            //Example of cairo container name
-            'cairo': '/add/cairo/file',
-        }
-
-        return mapping[techStack];
+        //@ts-ignore
+        return this.TECH_STACK_CONFIGS[techStack].fileNamePathToTest as string;
     }
 
-    /*
-    Every tech stack has a different parser. This parser make output prettier, removing things that does not make sense.
+    /**
+     * Every tech stack has a different parser. This parser make output prettier, removing things that does not make sense.
+     * @param techStack
      */
     getParserFromTechStack(techStack: TECH_STACKS): OutputParser {
-        const mapping = {
-            'solidity': new SolidityHardhatOutputParser(),
-            //Add Cairo parser
-            'cairo': new SolidityHardhatOutputParser(),
-        }
-
-        return mapping[techStack];
+        //@ts-ignore
+        return this.TECH_STACK_CONFIGS[techStack].parser as OutputParser;
     }
 }

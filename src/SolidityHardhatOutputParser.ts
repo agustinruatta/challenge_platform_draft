@@ -2,6 +2,10 @@ import OutputParser from "./OutputParser";
 
 export default class SolidityHardhatOutputParser implements OutputParser {
     parseOutput(exitCode: number, stdout: string, stderr: string): string {
+        if(stderr.includes('killed') && stderr.includes('timeout -s KILL')) {
+            return 'TIMEOUT';
+        }
+
         if (exitCode === 0) {
             return this.parseSuccess(stdout);
         } else {

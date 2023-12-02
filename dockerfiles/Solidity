@@ -20,12 +20,3 @@ RUN npm install
 # Execute tests for first time so it set up some cache. Use "> /dev/null" to ignore error messages.
 # Do an "echo" in order to ignore exit code 1 because tests will fail
 RUN npx hardhat test > /dev/null; echo ""
-
-# Set resource limits for security
-# Limit memory to 256MB
-# Limit CPU to 0.5 cores
-# Set the maximum number of open file descriptors to 1000
-# Add any other security configurations you need
-# RUN echo "memory:256m" > /sys/fs/cgroup/memory/memory.limit_in_bytes \
-#    && echo "0.5" > /sys/fs/cgroup/cpu/cpu.cfs_quota_us \
-#    && echo "1000" > /proc/sys/fs/file-max
