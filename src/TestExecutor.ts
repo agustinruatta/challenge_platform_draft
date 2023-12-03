@@ -10,9 +10,9 @@ export default class TestExecutor {
     private readonly TECH_STACK_CONFIGS = {
     'solidity': {
         executionConstraints: {
-            timeLimitInSeconds: 10,
-            memoryLimitInMB: 512,
-            cpusLimit: 0.5,
+            timeLimitInSeconds: 60,
+            memoryLimitInMB: 2048,
+            cpusLimit: 2,
         },
         imageName: 'solidity',
         fileNamePathToTest: '/app/argencoin/contracts/CentralBank.sol',
