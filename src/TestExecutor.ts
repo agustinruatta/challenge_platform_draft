@@ -1,6 +1,7 @@
 import {TECH_STACKS} from "./TechStacks";
 import SolidityHardhatOutputParser from "./SolidityHardhatOutputParser";
 import OutputParser from "./OutputParser";
+import CairoOutputParser from "./CairoOutputParser";
 
 const { exec } = require('child_process');
 const fs = require('fs');
@@ -8,7 +9,7 @@ const fs = require('fs');
 export default class TestExecutor {
     //TODO: Maybe this should be in a DB or a config file
     private readonly TECH_STACK_CONFIGS = {
-    'solidity': {
+    solidity: {
         executionConstraints: {
             timeLimitInSeconds: 60,
             memoryLimitInMB: 2048,
@@ -18,8 +19,18 @@ export default class TestExecutor {
         imageName: 'solidity',
         fileNamePathToTest: '/app/argencoin/contracts/CentralBank.sol',
         parser: new SolidityHardhatOutputParser()
+    },
+    cairo: {
+        executionConstraints: {
+            timeLimitInSeconds: 60,
+            memoryLimitInMB: 2048,
+            cpusLimit: 2,
+        },
+        testExecutionCommand: 'scarb test',
+        imageName: 'cairo',
+        fileNamePathToTest: '/app/cairo_calculator/src/user_code.cairo',
+        parser: new CairoOutputParser()
     }
-    //Do the same for cairo, same structure
 }
 
     async executeTest(

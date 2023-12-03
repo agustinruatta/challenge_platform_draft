@@ -1,0 +1,14 @@
+FROM starknet/cairo
+LABEL authors="agu"
+
+# Install git
+RUN apt-get update && apt-get install -y git
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Clone the private repository which contains the test cases
+RUN git clone https://github.com/agustinruatta/cairo_calculator
+
+# Set the working directory to the cloned repository
+WORKDIR /app/cairo_calculator
