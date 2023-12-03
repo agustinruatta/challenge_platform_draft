@@ -240,7 +240,6 @@ async function tryThis() {
     console.log('FAILURE EXAMPLE:');
     const failureExecutionResult = await testExecutor.executeTest(
         TECH_STACKS.SOLIDITY,
-        'npx hardhat test',
         'This is a random string sent from user'
     );
     console.log('SUCCESSFUL: ' + failureExecutionResult.successful);
@@ -254,7 +253,6 @@ async function tryThis() {
     const start = performance.now();
     const successExecutionResult = await testExecutor.executeTest(
         TECH_STACKS.SOLIDITY,
-        'npx hardhat test',
         userAssessmentCode
     );
     const end = performance.now();

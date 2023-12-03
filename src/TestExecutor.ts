@@ -14,6 +14,7 @@ export default class TestExecutor {
             memoryLimitInMB: 2048,
             cpusLimit: 2,
         },
+        testExecutionCommand: 'npx hardhat test',
         imageName: 'solidity',
         fileNamePathToTest: '/app/argencoin/contracts/CentralBank.sol',
         parser: new SolidityHardhatOutputParser()
@@ -23,14 +24,12 @@ export default class TestExecutor {
 
     async executeTest(
         techStack: TECH_STACKS,
-        //This is the command that we need to execute tests inside container. For example, with solidity using hardhat is "npx hardhat test"
-        commandToExecuteTests: string,
         //This is the code that the user has written and we need to check if it is OK
         userAssessmentCode: string,
     ) {
         const fileName = this.createTmpFile(userAssessmentCode);
 
-        const executionInfo = await this.executeDockerCall(techStack, commandToExecuteTests, fileName);
+        const executionInfo = await this.executeDockerCall(techStack, fileName);
 
         this.deleteTmpFile(fileName);
 
@@ -59,7 +58,6 @@ export default class TestExecutor {
 
     async executeDockerCall(
         techStack: TECH_STACKS,
-        commandToExecuteTests: string,
         userCodeFileName: string
     ): Promise<{ exitCode: number, stderr: string, stdout: string }> {
         return (new Promise((resolve) => {
@@ -78,7 +76,7 @@ export default class TestExecutor {
             Example of command:
             docker run --rm -v $(pwd)/user_assessments/userAssessmentCode1419503368532867:/app/argencoin/contracts/CentralBank.sol solidity sh -c "npx hardhat test"
              */
-            const command = `${this.getTimeoutLimit(techStack)} docker run --rm -v $(pwd)/user_assessments/${userCodeFileName}:${this.getFileNamePathToTest(techStack)} ${this.getPerformanceConstraints(techStack)} ${this.getImageNameFromTechStack(techStack)} sh -c "${commandToExecuteTests}"`;
+            const command = `${this.getTimeoutLimit(techStack)} docker run --rm -v $(pwd)/user_assessments/${userCodeFileName}:${this.getFileNamePathToTest(techStack)} ${this.getPerformanceConstraints(techStack)} ${this.getImageNameFromTechStack(techStack)} sh -c "${this.getTestsExecutionCommand(techStack)}"`;
 
             exec(command, (error: any, stdout: string, stderr: string) => {
                 const exitCode = error ? error.code : 0;
@@ -144,5 +142,11 @@ export default class TestExecutor {
     getParserFromTechStack(techStack: TECH_STACKS): OutputParser {
         //@ts-ignore
         return this.TECH_STACK_CONFIGS[techStack].parser as OutputParser;
+    }
+
+
+    getTestsExecutionCommand(techStack: TECH_STACKS): string {
+        //@ts-ignore
+        return this.TECH_STACK_CONFIGS[techStack].testExecutionCommand as string;
     }
 }
