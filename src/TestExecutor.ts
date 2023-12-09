@@ -92,9 +92,9 @@ export default class TestExecutor {
         cpusLimit: 2,
       },
       testExecutionCommand:
-        "zig test /app/zip-exercises/src/ex_{exerciseId}_test.zig",
+        "zig test /app/zig-exercises/src/ex_{exerciseId}_test.zig",
       imageName: "zig",
-      fileNamePathToTest: "/app/zip-exercises/src/ex_{exerciseId}.zig",
+      fileNamePathToTest: "/app/zig-exercises/src/ex_{exerciseId}.zig",
       parser: new ZigOutputParser(),
       userSubmittedCodePrefix: "",
       amountOfExercises: 2,
