@@ -69,7 +69,7 @@ export default class TestExecutor {
       fileNamePathToTest: "/app/argencoin/contracts/CentralBank.sol",
       parser: new SolidityHardhatOutputParser(),
       userSubmittedCodePrefix: "",
-      amountOfExercises: 3,
+      amountOfExercises: 2,
     },
     cairo: {
       executionConstraints: {
