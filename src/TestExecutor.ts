@@ -94,7 +94,7 @@ export default class TestExecutor {
       testExecutionCommand:
         "zig test /app/zip-exercises/src/ex_{exerciseId}_test.zig",
       imageName: "zig",
-      fileNamePathToTest: "/app/zip-exercises/src/ex_{exerciseId}.zip",
+      fileNamePathToTest: "/app/zip-exercises/src/ex_{exerciseId}.zig",
       parser: new ZigOutputParser(),
       userSubmittedCodePrefix: "",
       amountOfExercises: 2,
