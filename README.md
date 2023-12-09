@@ -1,9 +1,10 @@
 # Instructions
 Execute following steps:
 - Run `npm install`
-- Create solidity image: `docker build -t solidity -f ./dockerfiles/Solidity .`
-- Create solidity image: `docker build -t cairo -f ./dockerfiles/Cairo .`
-- Run this code in the terminal, so you can get a proof of concept `npx ts-node test.ts`
+- Create Solidity image: `docker build -t solidity -f ./dockerfiles/Solidity .`
+- Create Cairo image: `docker build -t cairo -f ./dockerfiles/Cairo .`
+- Create Zigy image: `docker build -t zig -f ./dockerfiles/Zig .`
+- Run this code in the terminal, sog you can get a proof of concept `npx ts-node test.ts`
 
 # How to use
 TestExecutor.ts is the main file. Use it in the code as following:
