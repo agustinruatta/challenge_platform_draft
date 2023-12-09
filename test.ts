@@ -6,7 +6,7 @@ const TEST_DATA = {
     Cairo: {
         stack: TECH_STACKS.CAIRO,
         "Invalid exercise ID": '',
-        "Invalid user input": 'This is a random string sent from user',
+        "Invalid user input": 'fn exercise_one() -> u16 {',
         "Exercise 1": `
 // Exercise 1: Make the mathematical addition work by modifying the code.
 fn exercise_one() -> u16 {
