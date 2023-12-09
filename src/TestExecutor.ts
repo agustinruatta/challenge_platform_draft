@@ -63,7 +63,7 @@ export default class TestExecutor {
                 memoryLimitInMB: 2048,
                 cpusLimit: 2,
             },
-            testExecutionCommand: 'npx hardhat test test/test_ex_',
+            testExecutionCommand: 'npx hardhat test test/test_ex_{exerciseId}',
             imageName: 'solidity',
             fileNamePathToTest: '/app/argencoin/contracts/CentralBank.sol',
             parser: new SolidityHardhatOutputParser(),
@@ -76,7 +76,7 @@ export default class TestExecutor {
                 memoryLimitInMB: 2048,
                 cpusLimit: 2,
             },
-            testExecutionCommand: 'scarb cairo-test -f test_ex_',
+            testExecutionCommand: 'echo \\"#[cfg(test)]\\nmod test_ex_{exerciseId};\\n\\" > /app/cairo-exercises/src/tests.cairo && scarb cairo-test -f test_ex_{exerciseId}',
             imageName: 'cairo',
             fileNamePathToTest: '/app/cairo-exercises/src/lib.cairo',
             parser: new CairoOutputParser(),
@@ -140,8 +140,9 @@ export default class TestExecutor {
             - ${this.getImageNameFromTechStack(techStack): we get the image name from the tech stack
             - sh -c "${commandToExecuteTests}": execute the code that will run the tests
 
-            Example of command:
-            docker run --rm -v $(pwd)/user_assessments/userAssessmentCode1419503368532867:/app/argencoin/contracts/CentralBank.sol solidity sh -c "npx hardhat test"
+            Examples of command:
+            Solidity: timeout -s KILL 60s docker run --rm -v $(pwd)/user_assessments/userAssessmentCode6381691804325935:/app/argencoin/contracts/CentralBank.sol -m 2048MB --cpus=2 --network none solidity sh -c "npx hardhat test test/test_ex_1"
+            Cairo: timeout -s KILL 60s docker run --rm -v $(pwd)/user_assessments/userAssessmentCode6924136168104222:/app/cairo-exercises/src/lib.cairo -m 2048MB --cpus=2 --network none cairo sh -c "echo \"#[cfg(test)]\nmod test_ex_1;\n\" > /app/cairo-exercises/src/tests.cairo && scarb cairo-test -f test_ex_1"
              */
             const command = `${this.getTimeoutLimit(techStack)} docker run --rm -v $(pwd)/user_assessments/${userCodeFileName}:${this.getFileNamePathToTest(techStack)} ${this.getPerformanceConstraints(techStack)} ${this.getImageNameFromTechStack(techStack)} sh -c "${this.getTestsExecutionCommand(techStack, exerciseId)}"`;
 
@@ -209,7 +210,10 @@ export default class TestExecutor {
 
 
     private getTestsExecutionCommand(techStack: TECH_STACKS, exerciseId: string): string {
-        return this.TECH_STACK_CONFIGS[techStack].testExecutionCommand + this.parserIdAsNumber(techStack, exerciseId);
+        return this.TECH_STACK_CONFIGS[techStack].testExecutionCommand.replaceAll(
+            '{exerciseId}',
+            this.parserIdAsNumber(techStack, exerciseId).toString()
+        );
     }
 
     /**
