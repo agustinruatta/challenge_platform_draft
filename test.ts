@@ -1,13 +1,36 @@
-import * as readlineSync from 'readline-sync';
-import {TECH_STACKS} from "./src/TechStacks";
+import * as readlineSync from "readline-sync";
+import { TECH_STACKS } from "./src/TechStacks";
 import TestExecutor from "./src/TestExecutor";
 
 const TEST_DATA = {
-    Cairo: {
-        stack: TECH_STACKS.CAIRO,
-        "Invalid exercise ID": '',
-        "Invalid user input": 'fn exercise_one() -> u16 {',
-        "Exercise 1": `
+  Zig: {
+    stack: TECH_STACKS.ZIG,
+    "Invalid exercise ID": "",
+    "Invalid user input": "asdf",
+    "Exercise 1": `
+        // EXERCISE 1
+
+        const std = @import("std");
+        
+        pub fn printHelloWorld(writer: anytype) !void {
+            try writer.print("Hello, world!", .{});
+        }
+`,
+    "Exercise 2": `
+    // EXERCISE 2
+
+    const std = @import("std");
+    
+    pub fn addOne(number: i32) i32 {
+        return number + 1;
+    }
+`,
+  },
+  Cairo: {
+    stack: TECH_STACKS.CAIRO,
+    "Invalid exercise ID": "",
+    "Invalid user input": "fn exercise_one() -> u16 {",
+    "Exercise 1": `
 // Exercise 1: Make the mathematical addition work by modifying the code.
 fn exercise_one() -> u16 {
     // Only modify the 2 lines below. Don't write any new lines of code.
@@ -18,7 +41,7 @@ fn exercise_one() -> u16 {
     sum
 }
 `,
-        "Exercise 2": `
+    "Exercise 2": `
 // Exercise 2: take the elements representing food from the 'random_elements' tuple and store them in a new tuple variable called 'food'.
 fn exercise_two() -> (felt252, felt252) {
     let random_elements = (100, 'sushi', 1, true, 'pizza', 'computer');
@@ -29,12 +52,12 @@ fn exercise_two() -> (felt252, felt252) {
     food
 }
 `,
-    },
-    Solidity: {
-        stack: TECH_STACKS.SOLIDITY,
-        "Invalid exercise ID": '',
-        "Invalid user input": 'This is a random string sent from user',
-        "Exercise 1": `
+  },
+  Solidity: {
+    stack: TECH_STACKS.SOLIDITY,
+    "Invalid exercise ID": "",
+    "Invalid user input": "This is a random string sent from user",
+    "Exercise 1": `
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
@@ -55,7 +78,7 @@ contract Testcoin is ERC20, ERC20Burnable, AccessControl, ERC20FlashMint {
     }
 }
 `,
-        "Exercise 2": `
+    "Exercise 2": `
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
@@ -286,67 +309,65 @@ contract CentralBank is Ownable {
     }
 }
 `,
-    },
-}
-
+  },
+};
 
 function selectTechnology(): string {
-    const technologies = ["Cairo", "Solidity"];
-    const index = readlineSync.keyInSelect(technologies, 'Select a technology:');
-    return technologies[index];
+  const technologies = ["Cairo", "Solidity", "Zig"];
+  const index = readlineSync.keyInSelect(technologies, "Select a technology:");
+  return technologies[index];
 }
 
 function selectTestCase(): string {
-    const testCases = [
-        "Invalid user input",
-        "Invalid exercise ID",
-        "Exercise 1",
-        "Exercise 2"
-    ];
-    const index = readlineSync.keyInSelect(testCases, 'Select a test case:');
-    return testCases[index];
+  const testCases = [
+    "Invalid user input",
+    "Invalid exercise ID",
+    "Exercise 1",
+    "Exercise 2",
+  ];
+  const index = readlineSync.keyInSelect(testCases, "Select a test case:");
+  return testCases[index];
 }
 
 async function main() {
-    const selectedTechnology = selectTechnology();
-    const selectedTestCase = selectTestCase();
-    console.log('\n\n');
+  const selectedTechnology = selectTechnology();
+  const selectedTestCase = selectTestCase();
+  console.log("\n\n");
 
-    const exerciseId = {
-        "Invalid exercise ID": 'someInvalid../../',
-        "Invalid user input": '1',
-        "Exercise 1": '1',
-        "Exercise 2": '2',
-    }[selectedTestCase];
+  const exerciseId = {
+    "Invalid exercise ID": "someInvalid../../",
+    "Invalid user input": "1",
+    "Exercise 1": "1",
+    "Exercise 2": "2",
+  }[selectedTestCase];
 
-    if (! selectedTechnology || ! selectedTestCase || !exerciseId) {
-        return;
-    }
+  if (!selectedTechnology || !selectedTestCase || !exerciseId) {
+    return;
+  }
 
-    const testExecutor = new TestExecutor();
+  const testExecutor = new TestExecutor();
 
-    const start = performance.now();
-    let end: number;
-    try {
-        const successExecutionResult = await testExecutor.executeTest(
-            // @ts-ignore
-            TEST_DATA[selectedTechnology].stack,
-            // @ts-ignore
-            TEST_DATA[selectedTechnology][selectedTestCase],
-            exerciseId,
-        );
+  const start = performance.now();
+  let end: number;
+  try {
+    const successExecutionResult = await testExecutor.executeTest(
+      // @ts-ignore
+      TEST_DATA[selectedTechnology].stack,
+      // @ts-ignore
+      TEST_DATA[selectedTechnology][selectedTestCase],
+      exerciseId
+    );
 
-        end = performance.now();
+    end = performance.now();
 
-        console.log('IS SUCCESSFUL: ' + successExecutionResult.successful);
-        console.log('OUTPUT:\n' + successExecutionResult.output);
+    console.log("IS SUCCESSFUL: " + successExecutionResult.successful);
+    console.log("OUTPUT:\n" + successExecutionResult.output);
+  } catch (e) {
+    end = performance.now();
+    console.log("EXCEPTION THROWN: " + e);
+  }
 
-    } catch (e) {
-        end = performance.now();
-        console.log('EXCEPTION THROWN: ' + e);
-    }
-
-    console.log(`EXECUTION TIME: ${end - start} ms.`);
+  console.log(`EXECUTION TIME: ${end - start} ms.`);
 }
 
 main();

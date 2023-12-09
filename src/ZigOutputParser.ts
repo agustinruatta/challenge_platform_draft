@@ -6,6 +6,6 @@ export default class ZigOutputParser implements OutputParser {
       return "TIMEOUT";
     }
 
-    return stdout;
+    return stdout + "\n" + stderr;
   }
 }

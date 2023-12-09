@@ -2,7 +2,7 @@
 FROM node:18
 
 # Install dependencies
-RUN apt-get update && apt-get add --no-cache curl libstdc++ git
+RUN apt-get update && apt-get install -y curl git
 
 # Define Zig version and installation directory
 ENV ZIG_VERSION="0.11.0" \
@@ -24,3 +24,6 @@ RUN git clone https://github.com/richwarner/zig-exercises
 # Set the working directory to the cloned repository
 WORKDIR /app/zig-exercises
 
+# Execute tests for first time so it set up some cache. Use "> /dev/null" to ignore error messages.
+# Do an "echo" in order to ignore exit code 1 because tests will fail
+RUN zig build test > /dev/null; echo ""
