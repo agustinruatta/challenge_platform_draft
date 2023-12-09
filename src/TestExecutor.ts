@@ -78,7 +78,7 @@ export default class TestExecutor {
             },
             testExecutionCommand: 'scarb cairo-test -f test_ex_',
             imageName: 'cairo',
-            fileNamePathToTest: '/app/cairo_calculator/src/user_code.cairo',
+            fileNamePathToTest: '/app/cairo-exercises/src/lib.cairo',
             parser: new CairoOutputParser(),
             userSubmittedCodePrefix: "#[cfg(test)]\nmod tests;\n\n",
             amountOfExercises: 2,
