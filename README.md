@@ -5,6 +5,23 @@ Execute following steps:
 - Create solidity image: `docker build -t cairo -f ./dockerfiles/Cairo .`
 - Run this code in the terminal, so you can get a proof of concept `npx ts-node test.ts`
 
+# How to use
+TestExecutor.ts is the main file. Use it in the code as following:
+```typescript
+try {
+    const executionResult = await testExecutor.executeTest(
+        //Replace it from what techonology user is trying to learn
+        'solidity',
+        //Code that user submitted
+        useSubmittedCode,
+        //Frontend has to send the exercise ID. This must be a string from '1' to the last exercise (For example, '13')
+        '1',
+    );
+} catch (e) {
+    console.log('This is because frontend sent an invalid ID');
+}
+```
+
 # Performance Solidity
 I checked performance executing 4 times inside docker and 4 times in my computer and I have the following results (48.64% faster inside docker):
 

@@ -63,7 +63,7 @@ export default class TestExecutor {
                 memoryLimitInMB: 2048,
                 cpusLimit: 2,
             },
-            testExecutionCommand: 'npx hardhat test',
+            testExecutionCommand: 'npx hardhat test test/test_ex_',
             imageName: 'solidity',
             fileNamePathToTest: '/app/argencoin/contracts/CentralBank.sol',
             parser: new SolidityHardhatOutputParser(),
