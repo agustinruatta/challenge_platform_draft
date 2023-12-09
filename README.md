@@ -1,12 +1,9 @@
 # Instructions
 Execute following steps:
 - Run `npm install`
-- Solidity:
-  - Create solidity image: `docker build -t solidity -f ./dockerfiles/Solidity .`
-  - Run this code in the terminal, so you can get a proof of concept `npx ts-node main_solidity.ts`
-- Cairo (NOT READY YET!!!)
-  - Create solidity image: `docker build -t cairo -f ./dockerfiles/Cairo .`
-  - Run this code in the terminal, so you can get a proof of concept `npx ts-node main_cairo.ts`
+- Create solidity image: `docker build -t solidity -f ./dockerfiles/Solidity .`
+- Create solidity image: `docker build -t cairo -f ./dockerfiles/Cairo .`
+- Run this code in the terminal, so you can get a proof of concept `npx ts-node test.ts`
 
 # Performance Solidity
 I checked performance executing 4 times inside docker and 4 times in my computer and I have the following results (48.64% faster inside docker):
