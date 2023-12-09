@@ -1,14 +1,26 @@
-FROM starknet/cairo
+# IMPORTANT: use LTS versions
+# DISCLAIMER: this is not the lightest image, but because we're already using it in Solidity, let's reuse it
+FROM node:18
 LABEL authors="agu"
 
-# Install git
-RUN apt-get update && apt-get install -y git
+# Install git and curl
+RUN apt-get update && apt-get install -y git curl
+
+# Install Scarb
+RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh || true
+
+# Manually add Scarb to PATH
+ENV PATH="/root/.local/bin:${PATH}"
 
 # Set the working directory to /app
 WORKDIR /app
 
 # Clone the private repository which contains the test cases
-RUN git clone https://github.com/agustinruatta/cairo_calculator
+RUN git clone -b main https://github.com/agustinruatta/cairo-exercises
 
 # Set the working directory to the cloned repository
-WORKDIR /app/cairo_calculator
+WORKDIR /app/cairo-exercises
+
+# Execute tests for first time so it set up some cache. Use "> /dev/null" to ignore error messages.
+# Do an "echo" in order to ignore exit code 1 because tests will fail
+RUN scarb cairo-test > /dev/null; echo ""
