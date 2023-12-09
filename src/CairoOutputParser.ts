@@ -9,7 +9,8 @@ export default class CairoOutputParser implements OutputParser {
         if (exitCode === 0) {
             return this.parseSuccess(stdout);
         } else {
-            return this.parseError(stderr);
+            //There's better info in stdout than stderr when test fails. So it's ok to send stdout
+            return this.parseError(stdout);
         }
     }
 
@@ -22,6 +23,7 @@ export default class CairoOutputParser implements OutputParser {
     }
 
     parseError(stderr: string): string {
-        return stderr;
+        //Replace all sensitive info
+        return stderr.replaceAll('/app/cairo-exercises/src/', '');
     }
 }
