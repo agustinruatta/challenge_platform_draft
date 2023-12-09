@@ -1,0 +1,26 @@
+# Use same image as others
+FROM node:18
+
+# Install dependencies
+RUN apt-get update && apt-get add --no-cache curl libstdc++ git
+
+# Define Zig version and installation directory
+ENV ZIG_VERSION="0.11.0" \
+    ZIG_PATH="/opt/zig"
+
+# Download and install Zig
+RUN mkdir -p ${ZIG_PATH} && \
+    curl -L "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" | tar -Jxv -C ${ZIG_PATH} --strip-components=1
+
+# Add Zig to PATH
+ENV PATH="${ZIG_PATH}:${PATH}"
+
+# Verify installation
+RUN zig version
+
+# Clone the repository containing the test cases
+WORKDIR /app
+RUN git clone https://github.com/richwarner/zig-exercises
+# Set the working directory to the cloned repository
+WORKDIR /app/zig-exercises
+
